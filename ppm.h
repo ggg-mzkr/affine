@@ -14,6 +14,6 @@
 #define COLOR_OFFSET 10
 
 Image *read_image(char *filename);
-void write_image(char *filename, Image *image);
+int *write_image(char *filename, Image *image);
 void getNextToken(FILE *fp, char *buf);
 #endif //AFFINE_PPM_H

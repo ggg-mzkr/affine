@@ -35,24 +35,33 @@ int main(int argc, char *argv[])
     inputName  = argv[4];
     outputName = argv[5];
 
-    img = read_image(inputName);
+    if ((img = read_image(inputName)) == NULL ) {
+        exit(1);
+    }
 
 
     if (strcmp(method, "scale") == 0) {
 
-        img = scale(img, direction, value);
+        if ((img = scale(img, direction, value)) == NULL) {
+            exit(1);
+        }
 
     } else if (strcmp(method, "move") == 0) {
 
-        img = move(img, direction, value);
-
+        if ((img = move(img, direction, value)) == NULL) {
+            exit(1);
+        }
     } else if (strcmp(method, "rotation") == 0) {
 
-        img = rotation(img, direction, value);
+        if ((img = rotation(img, direction, value)) == NULL) {
+            exit(1);
+        }
 
     } else if (strcmp(method, "skew") == 0) {
 
-        img = skew(img, direction, value);
+        if ((img = skew(img, direction, value)) == NULL) {
+            exit(1);
+        }
 
     } else {
 
@@ -60,7 +69,9 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    write_image(outputName, img);
+    if ((write_image(outputName, img)) == NULL) {
+        exit(1);
+    }
 
     freeImage(img);
 }

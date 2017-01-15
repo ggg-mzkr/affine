@@ -11,6 +11,6 @@
 
 Image *read_image(char *filename);
 
-void write_image(char *filename, Image *img);
+int *write_image(char *filename, Image *img);
 
 #endif /*__AFFINE_BITMAP_H__*/

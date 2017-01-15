@@ -37,7 +37,7 @@ Image *scale(Image *img, char direction, double scale)
         newWidth = (int)(fabs(oldWidth*scale));
     } else {
         fprintf(stderr, "引数が正しくありません: scale %c %lf\n", direction, scale);
-        exit(1);
+        return NULL;
     }
 
     // 鏡映時のオフセット
@@ -95,7 +95,7 @@ Image *move(Image *img, char direction, int pix)
         newWidth = oldWidth+abs(pix);
     } else {
         fprintf(stderr, "引数が正しくありません: move %c %d\n", direction, pix);
-        exit(1);
+        return NULL;
     }
 
 
@@ -169,7 +169,7 @@ Image *rotation(Image *img, char direction, int degrees)
 
     } else {
         fprintf(stderr, "引数が正しくありません: rotation %c %d\n", direction, degrees);
-        exit(1);
+        return NULL;
     }
 
     // 第１象限からはみ出す分のオフセット
@@ -254,7 +254,7 @@ Image *skew(Image *img, char direction, int degrees)
 
     if (degrees == 90 || degrees == 270) {
         fprintf(stderr, "%d度ではせん断できません\n", degrees);
-        exit(1);
+        return NULL;
     }
 
     theta = degrees * PI / 180;
@@ -268,7 +268,7 @@ Image *skew(Image *img, char direction, int degrees)
         newHeight = (int)(oldHeight+fabs(oldWidth*tan(theta)));
     } else {
         fprintf(stderr, "引数が正しくありません: skew %c %d\n", direction, degrees);
-        exit(1);
+        return NULL;
     }
 
     // 第１象限からはみ出す分のオフセット
