@@ -16,7 +16,7 @@ Image *read_image(char *filename)
     int   color;
     int   row_size;
     char  *row;
-    char  header_buf[HEADERSIZE];
+    char  header[HEADER_SIZE_BITMAP];
     FILE  *fp;
     Image *img;
 
@@ -25,17 +25,17 @@ Image *read_image(char *filename)
         exit(1);
     }
 
-    fread(header_buf, sizeof(char), HEADERSIZE, fp);
+    fread(header, sizeof(char), HEADER_SIZE_BITMAP, fp);
 
-    if(strncmp(header_buf, "BM", 2)){
+    if(strncmp(header, "BM", 2)){
         fclose(fp);
         fprintf(stderr, "エラー: %s はbitmapではありません", filename);
         exit(1);
     }
 
-    memcpy(&width, header_buf + 18, sizeof(width));
-    memcpy(&height, header_buf + 22, sizeof(height));
-    memcpy(&color, header_buf + 28, sizeof(color));
+    memcpy(&width, header + 18, sizeof(width));
+    memcpy(&height, header + 22, sizeof(height));
+    memcpy(&color, header + 28, sizeof(color));
 
     if (color != 24) {
         fclose(fp);
@@ -43,7 +43,7 @@ Image *read_image(char *filename)
         exit(1);
     }
 
-    if((img = initImage(width, height, color, "BM")) == NULL){
+    if((img = initImage(width, height, HEADER_SIZE_BITMAP, header, true)) == NULL){
         fclose(fp);
         fprintf(stderr, "エラー: 画像の初期化に失敗しました\n");
         exit(1);
@@ -57,7 +57,7 @@ Image *read_image(char *filename)
     }
 
     for(i=0; i<height; i++){
-        fread(row, 1, row_size, fp);
+        fread(row, 1, sizeof( char)*row_size, fp);
         for(j=0; j<width; j++){
             img->pRgb[i*width + j].b = row[j*3];
             img->pRgb[i*width + j].g = row[j*3 + 1];
@@ -74,14 +74,14 @@ Image *read_image(char *filename)
 void write_image(char *filename, Image *img)
 {
     int  i, j;
-    int  row_size;
     int  width, height;
+    int  row_size;
     char *row;
-    char header_buf[HEADERSIZE] = {0};
+    char header[HEADER_SIZE_BITMAP];
     FILE *fp;
     
-    int file_size, offset, planes, color;
-    long info_header_size, data_size;
+    int file_size;
+    long data_size;
 
 
     if((fp = fopen(filename, "wb")) == NULL){
@@ -91,31 +91,23 @@ void write_image(char *filename, Image *img)
 
     width  = img->width;
     height = img->height;
-    color  = img->color;
 
     row_size         = width*3 + width%4;
     data_size        = height * row_size;
-    file_size        = height * row_size + HEADERSIZE;
-    offset           = HEADERSIZE;
-    info_header_size = INFOHEADERSIZE;
-    planes           = 1;
+    file_size        = height * row_size + HEADER_SIZE_BITMAP;
 
+    memcpy(header, img->header, sizeof(char)*HEADER_SIZE_BITMAP);
 
     // 情報ヘッダの作成
-    strcpy(header_buf, "BM");
-    memcpy(header_buf + 2, &file_size, sizeof(file_size));
-    memcpy(header_buf + 10, &offset, sizeof(offset));
+    memcpy(header + 2, &file_size, sizeof(file_size));
 
     // ファイルヘッダの作成
-    memcpy(header_buf + 14, &info_header_size, sizeof(info_header_size));
-    memcpy(header_buf + 18, &width, sizeof(width));
-    memcpy(header_buf + 22, &height, sizeof(height));
-    memcpy(header_buf + 26, &planes, sizeof(planes));
-    memcpy(header_buf + 28, &color, sizeof(color));
-    memcpy(header_buf + 34, &data_size, sizeof(data_size));
+    memcpy(header + 18, &width, sizeof(width));
+    memcpy(header + 22, &height, sizeof(height));
+    memcpy(header + 34, &data_size, sizeof(data_size));
 
 
-    fwrite(header_buf, sizeof( char), HEADERSIZE, fp);
+    fwrite(header, sizeof( char), HEADER_SIZE_BITMAP, fp);
 
     if((row = (char *)malloc(sizeof(char)*row_size)) == NULL){
         fprintf(stderr, "エラー: メモリの初期化に失敗しました\n");
@@ -135,7 +127,7 @@ void write_image(char *filename, Image *img)
             row[j] = 0;
         }
 
-        fwrite(row, sizeof(char), row_size, fp);
+        fwrite(row, sizeof(char), sizeof( char)*row_size, fp);
     }
 
     free(row);

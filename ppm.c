@@ -7,22 +7,33 @@
 #include "img_obj.h"
 #include "ppm.h"
 
+
 Image *read_image(char *filename)
 {
 
     int i, j;
-    char format[2];
     char buf[256];
-    int width, height, color;
+    char header[HEADER_SIZE_PPM];
+    int width, height;
+    bool isColor;
     FILE *fp;
     Image *img;
 
-    if ((fp = fopen(filename, "rb")) == NULL) {
+    if ((fp = fopen(filename, "r")) == NULL) {
         fprintf(stderr, "エラー: %s が読み取れません", filename);
         return NULL;
     }
 
-    fscanf(fp, "%s", format);
+
+
+    getNextToken(fp, buf);
+    strcpy(header + FORMAT_OFFSET, buf);
+
+    if (strcmp(buf, "P3") != 0) {
+        isColor = false;
+    } else {
+        isColor = true;
+    }
 
     getNextToken(fp, buf);
     width = atoi(buf);
@@ -31,16 +42,13 @@ Image *read_image(char *filename)
     height = atoi(buf);
 
     getNextToken(fp, buf);
-    color = atoi(buf);
+    strcpy(header + 10, buf);
 
-    if ((img = initImage(width ,height, color, format)) == NULL) {
+
+    if ((img = initImage(width ,height, HEADER_SIZE_PPM, header, isColor)) == NULL) {
         fclose(fp);
         fprintf(stderr, "画像の初期化に失敗しました\n");
         exit(1);
-    }
-
-    if (strcmp(format, "P6") != 0) {
-        img->isColor = false;
     }
 
     if (img->isColor) {
@@ -69,7 +77,7 @@ void write_image(char *filename, Image *img)
     int width, height;
     FILE *fp;
 
-    if ((fp = fopen(filename, "wb")) == NULL) {
+    if ((fp = fopen(filename, "w")) == NULL) {
         fprintf(stderr, "エラー: %s が読み取れません", filename);
         exit(1);
     }
@@ -77,9 +85,9 @@ void write_image(char *filename, Image *img)
     width = img->width;
     height = img->height;
 
-    fprintf(fp, "%s\n", img->format);
+    fprintf(fp, "%s\n", img->header + FORMAT_OFFSET);
     fprintf(fp, "%d %d\n", width, height);
-    fprintf(fp, "%d\n", img->color);
+    fprintf(fp, "%d\n", atoi(img->header + COLOR_OFFSET));
 
     if (img->isColor) {
         for (i = height-1; i >= 0; i--) {
