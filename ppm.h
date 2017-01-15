@@ -9,6 +9,9 @@
 #include <stdio.h>
 #include "img_obj.h"
 
+#define HEADER_SIZE_PPM 20
+#define FORMAT_OFFSET 0
+#define COLOR_OFFSET 10
 
 Image *read_image(char *filename);
 void write_image(char *filename, Image *image);

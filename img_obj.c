@@ -7,7 +7,7 @@
 #include <string.h>
 #include"img_obj.h"
 
-Image *initImage(int width, int height, int color, char *format)
+Image *initImage(int width, int height, int headerSize, char *header, bool isColor)
 {
     Image *img;
 
@@ -19,21 +19,22 @@ Image *initImage(int width, int height, int color, char *format)
         return NULL;
     }
 
-    if ((img->format = (char *)malloc(sizeof(format))) == NULL) {
+    if ((img->header = (char *)malloc(sizeof(char)*headerSize)) == NULL) {
         return NULL;
     }
 
     img->width = width;
     img->height = height;
-    img->color = color;
-    strcpy(img->format, format);
+    img->isColor = isColor;
+    img->headerSize = headerSize;
+    memcpy(img->header, header, sizeof(char)*headerSize);
 
     return img;
 }
 
 void freeImage(Image *img)
 {
-    free(img->format);
+    free(img->header);
 
     free(img->pRgb);
 

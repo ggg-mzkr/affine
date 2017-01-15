@@ -5,9 +5,7 @@
 #ifndef __AFFINE_BITMAP_H__
 #define __AFFINE_BITMAP_H__
 
-#define FILEHEADERSIZE 14
-#define INFOHEADERSIZE 40
-#define HEADERSIZE (FILEHEADERSIZE+INFOHEADERSIZE)
+#define HEADER_SIZE_BITMAP 54
 
 #include "img_obj.h"
 

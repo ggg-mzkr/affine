@@ -16,13 +16,13 @@ typedef struct{
 typedef struct {
     int width;
     int height;
-    int color;
-    char *format;
+    int headerSize;
+    char *header;
     Rgb *pRgb;
     bool isColor;
 }Image;
 
-Image *initImage(int width, int height, int color, char *format);
+Image *initImage(int width, int height, int headerSize, char *header, bool isColor);
 
 void freeImage(Image *img);
 

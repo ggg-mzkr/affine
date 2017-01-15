@@ -51,8 +51,7 @@ Image *scale(Image *img, char direction, double scale)
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->color, img->format);
-
+    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
@@ -113,7 +112,7 @@ Image *move(Image *img, char direction, int pix)
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->color, img->format);
+    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
@@ -215,7 +214,7 @@ Image *rotation(Image *img, char direction, int degrees)
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->color, img->format);
+    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
@@ -284,7 +283,7 @@ Image *skew(Image *img, char direction, int degrees)
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->color, img->format);
+    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
