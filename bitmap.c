@@ -21,16 +21,16 @@ Image *read_image(char *filename)
     Image *img;
 
     if((fp = fopen(filename, "rb")) == NULL){
-        fprintf(stderr, "エラー: %s ファイルが開けません", filename);
-        exit(1);
+        fprintf(stderr, "エラー: %s が読み取れません\n", filename);
+        return NULL;
     }
 
     fread(header, sizeof(char), HEADER_SIZE_BITMAP, fp);
 
     if(strncmp(header, "BM", 2)){
         fclose(fp);
-        fprintf(stderr, "エラー: %s はbitmapではありません", filename);
-        exit(1);
+        fprintf(stderr, "エラー: %s はbitmapではありません\n", filename);
+        return NULL;
     }
 
     memcpy(&width, header + 18, sizeof(width));
@@ -40,18 +40,19 @@ Image *read_image(char *filename)
     if (color != 24) {
         fclose(fp);
         fprintf(stderr, "エラー: 24bitカラーのbitmapのみ対応しています\n");
-        exit(1);
+        return NULL;
     }
 
     if((img = initImage(width, height, HEADER_SIZE_BITMAP, header, true)) == NULL){
         fclose(fp);
         fprintf(stderr, "エラー: 画像の初期化に失敗しました\n");
-        exit(1);
+        return NULL;
     }
 
     row_size = width*3 + width%4;
 
     if((row = ( char *)malloc(sizeof( char) * row_size)) == NULL){
+        fclose(fp);
         fprintf(stderr, "エラー: メモリの初期化に失敗しました\n");
         return NULL;
     }
@@ -71,7 +72,7 @@ Image *read_image(char *filename)
     return img;
 }
 
-void write_image(char *filename, Image *img)
+int *write_image(char *filename, Image *img)
 {
     int  i, j;
     int  width, height;
@@ -85,8 +86,8 @@ void write_image(char *filename, Image *img)
 
 
     if((fp = fopen(filename, "wb")) == NULL){
-        fprintf(stderr, "エラー: %s ファイルが開けません", filename);
-        exit(1);
+        fprintf(stderr, "エラー: %s が読み取れません", filename);
+        return NULL;
     }
 
     width  = img->width;
@@ -96,12 +97,11 @@ void write_image(char *filename, Image *img)
     data_size        = height * row_size;
     file_size        = height * row_size + HEADER_SIZE_BITMAP;
 
+
     memcpy(header, img->header, sizeof(char)*HEADER_SIZE_BITMAP);
 
-    // 情報ヘッダの作成
+    // ヘッダ情報の書き換え
     memcpy(header + 2, &file_size, sizeof(file_size));
-
-    // ファイルヘッダの作成
     memcpy(header + 18, &width, sizeof(width));
     memcpy(header + 22, &height, sizeof(height));
     memcpy(header + 34, &data_size, sizeof(data_size));
@@ -112,7 +112,7 @@ void write_image(char *filename, Image *img)
     if((row = (char *)malloc(sizeof(char)*row_size)) == NULL){
         fprintf(stderr, "エラー: メモリの初期化に失敗しました\n");
         fclose(fp);
-        exit(1);
+        return NULL;
     }
 
     for(i=0; i<height; i++){
@@ -131,6 +131,7 @@ void write_image(char *filename, Image *img)
     }
 
     free(row);
-
     fclose(fp);
+
+    return 0;
 }

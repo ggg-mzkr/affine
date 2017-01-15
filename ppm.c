@@ -24,8 +24,6 @@ Image *read_image(char *filename)
         return NULL;
     }
 
-
-
     getNextToken(fp, buf);
     strcpy(header + FORMAT_OFFSET, buf);
 
@@ -42,13 +40,13 @@ Image *read_image(char *filename)
     height = atoi(buf);
 
     getNextToken(fp, buf);
-    strcpy(header + 10, buf);
+    strcpy(header + COLOR_OFFSET, buf);
 
 
     if ((img = initImage(width ,height, HEADER_SIZE_PPM, header, isColor)) == NULL) {
         fclose(fp);
-        fprintf(stderr, "画像の初期化に失敗しました\n");
-        exit(1);
+        fprintf(stderr, "エラー: 画像の初期化に失敗しました\n");
+        return NULL;
     }
 
     if (img->isColor) {
@@ -70,7 +68,7 @@ Image *read_image(char *filename)
     return img;
 }
 
-void write_image(char *filename, Image *img)
+int *write_image(char *filename, Image *img)
 {
 
     int i, j;
@@ -79,7 +77,7 @@ void write_image(char *filename, Image *img)
 
     if ((fp = fopen(filename, "w")) == NULL) {
         fprintf(stderr, "エラー: %s が読み取れません", filename);
-        exit(1);
+        return NULL;
     }
 
     width = img->width;
@@ -111,6 +109,8 @@ void write_image(char *filename, Image *img)
     }
 
     fclose(fp);
+
+    return 0;
 
 }
 
