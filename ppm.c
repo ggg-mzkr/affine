@@ -8,7 +8,7 @@
 #include "ppm.h"
 
 
-Image *read_image(char *filename)
+Image *readImage(char *filename)
 {
 
     int i, j;
@@ -68,7 +68,7 @@ Image *read_image(char *filename)
     return img;
 }
 
-int *write_image(char *filename, Image *img)
+int *writeImage(char *filename, Image *img)
 {
 
     int i, j;

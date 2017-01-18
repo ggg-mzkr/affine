@@ -13,7 +13,7 @@
 #define FORMAT_OFFSET 0
 #define COLOR_OFFSET 10
 
-Image *read_image(char *filename);
-int *write_image(char *filename, Image *image);
+Image *readImage(char *filename);
+int *writeImage(char *filename, Image *image);
 void getNextToken(FILE *fp, char *buf);
 #endif //AFFINE_PPM_H

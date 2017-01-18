@@ -9,8 +9,8 @@
 
 #include "img_obj.h"
 
-Image *read_image(char *filename);
+Image *readImage(char *filename);
 
-int *write_image(char *filename, Image *img);
+int *writeImage(char *filename, Image *img);
 
 #endif /*__AFFINE_BITMAP_H__*/

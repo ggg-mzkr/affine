@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     inputName  = argv[4];
     outputName = argv[5];
 
-    if ((img = read_image(inputName)) == NULL ) {
+    if ((img = readImage(inputName)) == NULL ) {
         exit(1);
     }
 
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    if ((write_image(outputName, img)) == NULL) {
+    if ((writeImage(outputName, img)) == NULL) {
         exit(1);
     }
 

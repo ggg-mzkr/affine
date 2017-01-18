@@ -9,12 +9,12 @@
 #include "img_obj.h"
 
 
-Image *read_image(char *filename)
+Image *readImage(char *filename)
 {
     int   i, j;
     int   width, height;
     int   color;
-    int   row_size;
+    int   rowSize;
     char  *row;
     char  header[HEADER_SIZE_BITMAP];
     FILE  *fp;
@@ -49,16 +49,16 @@ Image *read_image(char *filename)
         return NULL;
     }
 
-    row_size = width*3 + width%4;
+    rowSize = width*3 + width%4;
 
-    if((row = ( char *)malloc(sizeof( char) * row_size)) == NULL){
+    if((row = ( char *)malloc(sizeof( char) * rowSize)) == NULL){
         fclose(fp);
         fprintf(stderr, "エラー: メモリの初期化に失敗しました\n");
         return NULL;
     }
 
     for(i=0; i<height; i++){
-        fread(row, 1, sizeof( char)*row_size, fp);
+        fread(row, 1, sizeof(char)*rowSize, fp);
         for(j=0; j<width; j++){
             img->pRgb[i*width + j].b = row[j*3];
             img->pRgb[i*width + j].g = row[j*3 + 1];
@@ -72,17 +72,17 @@ Image *read_image(char *filename)
     return img;
 }
 
-int *write_image(char *filename, Image *img)
+int *writeImage(char *filename, Image *img)
 {
     int  i, j;
     int  width, height;
-    int  row_size;
+    int  rowSize;
     char *row;
     char header[HEADER_SIZE_BITMAP];
     FILE *fp;
     
-    int file_size;
-    long data_size;
+    int fileSize;
+    long dataSize;
 
 
     if((fp = fopen(filename, "wb")) == NULL){
@@ -93,23 +93,23 @@ int *write_image(char *filename, Image *img)
     width  = img->width;
     height = img->height;
 
-    row_size         = width*3 + width%4;
-    data_size        = height * row_size;
-    file_size        = height * row_size + HEADER_SIZE_BITMAP;
+    rowSize   = width*3 + width%4;
+    dataSize  = height * rowSize;
+    fileSize  = height * rowSize + HEADER_SIZE_BITMAP;
 
 
     memcpy(header, img->header, sizeof(char)*HEADER_SIZE_BITMAP);
 
     // ヘッダ情報の書き換え
-    memcpy(header + 2, &file_size, sizeof(file_size));
+    memcpy(header + 2, &fileSize, sizeof(fileSize));
     memcpy(header + 18, &width, sizeof(width));
     memcpy(header + 22, &height, sizeof(height));
-    memcpy(header + 34, &data_size, sizeof(data_size));
+    memcpy(header + 34, &dataSize, sizeof(dataSize));
 
 
-    fwrite(header, sizeof( char), HEADER_SIZE_BITMAP, fp);
+    fwrite(header, sizeof(char), HEADER_SIZE_BITMAP, fp);
 
-    if((row = (char *)malloc(sizeof(char)*row_size)) == NULL){
+    if((row = (char *)malloc(sizeof(char)*rowSize)) == NULL){
         fprintf(stderr, "エラー: メモリの初期化に失敗しました\n");
         fclose(fp);
         return NULL;
@@ -123,11 +123,11 @@ int *write_image(char *filename, Image *img)
             row[j*3 + 2] = img->pRgb[i*width + j].r;
         }
 
-        for(j=width*3; j<row_size; j++){
+        for(j=width*3; j<rowSize; j++){
             row[j] = 0;
         }
 
-        fwrite(row, sizeof(char), sizeof( char)*row_size, fp);
+        fwrite(row, sizeof(char), sizeof(char)*rowSize, fp);
     }
 
     free(row);

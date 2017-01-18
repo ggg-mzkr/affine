@@ -18,3 +18,5 @@ ppm.o: ppm.c
 
 clean:
 	rm *.o
+	rm affine_bitmap
+	rm affine_ppm
