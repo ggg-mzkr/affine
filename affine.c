@@ -18,7 +18,7 @@ Image *scale(Image *img, char direction, double scale)
     int newWidth, newHeight;
     int oldWidth, oldHeight;
     double mat[3][3] = {{1,0,0,}, {0,1,0}, {0,0,1}};
-    Image *converted_img;
+    Image *cnvImg;
     Rgb black = {0,0,0};
 
 
@@ -29,12 +29,12 @@ Image *scale(Image *img, char direction, double scale)
     newHeight = img->height;
 
     // 変換行列の作成
-    if (direction == 'y') {
+    if (direction == 'x') {
         mat[0][0] = scale;
-        newHeight = (int)(fabs(oldHeight*scale));
-    } else if (direction == 'x') {
-        mat[1][1] = scale;
         newWidth = (int)(fabs(oldWidth*scale));
+    } else if (direction == 'y') {
+        mat[1][1] = scale;
+        newHeight = (int)(fabs(oldHeight*scale));
     } else {
         fprintf(stderr, "引数が正しくありません: scale %c %lf\n", direction, scale);
         return NULL;
@@ -42,31 +42,31 @@ Image *scale(Image *img, char direction, double scale)
 
     // 鏡映時のオフセット
     if (scale < 0) {
-        if (direction == 'y') {
-            mat[0][2] = newHeight;
+        if (direction == 'x') {
+            mat[0][2] = newWidth;
         } else {
-            mat[1][2] = newWidth;
+            mat[1][2] = newHeight;
         }
     }
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
+    cnvImg = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
-            x = (int)(mat[0][0]*i + mat[0][1]*j + mat[0][2]);
-            y = (int)(mat[1][0]*i + mat[1][1]*j + mat[1][2]);
+            x = (int)(mat[0][0]*j + mat[0][1]*i + mat[0][2]);
+            y = (int)(mat[1][0]*j + mat[1][1]*i + mat[1][2]);
 
-            if ( (0<=y) && (y<oldWidth) && (0<=x) && (x<oldHeight)) {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &img->pRgb[x * oldWidth + y], sizeof(Rgb));
+            if ( (0<=x) && (x<oldWidth) && (0<=y) && (y<oldHeight)) {
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
             } else {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &black, sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &black, sizeof(Rgb));
             }
         }
     }
 
-    return converted_img;
+    return cnvImg;
 }
 
 
@@ -77,7 +77,7 @@ Image *move(Image *img, char direction, int pix)
     int newWidth, newHeight;
     int oldWidth, oldHeight;
     double mat[3][3] = {{1,0,0,}, {0,1,0}, {0,0,1}};
-    Image *converted_img;
+    Image *cnvImg;
     Rgb black = {0,0,0};
 
     oldWidth = img->width;
@@ -87,12 +87,12 @@ Image *move(Image *img, char direction, int pix)
     newHeight = img->height;
 
     // 変換行列の作成
-    if (direction == 'y') {
+    if (direction == 'x') {
         mat[0][2] = pix;
-        newHeight = oldHeight+abs(pix);
-    } else if (direction == 'x') {
-        mat[1][2] = pix;
         newWidth = oldWidth+abs(pix);
+    } else if (direction == 'y') {
+        mat[1][2] = pix;
+        newHeight = oldHeight+abs(pix);
     } else {
         fprintf(stderr, "引数が正しくありません: move %c %d\n", direction, pix);
         return NULL;
@@ -102,7 +102,7 @@ Image *move(Image *img, char direction, int pix)
     // 負の方向へ移動する際のオフセット
     if (pix < 0) {
 
-        if (direction == 'y') {
+        if (direction == 'x') {
             mat[0][2] = 0;
 
         } else {
@@ -112,22 +112,22 @@ Image *move(Image *img, char direction, int pix)
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
+    cnvImg = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
-            x = (int)(mat[0][0]*i + mat[0][1]*j + mat[0][2]);
-            y = (int)(mat[1][0]*i + mat[1][1]*j + mat[1][2]);
+            x = (int)(mat[0][0]*j + mat[0][1]*i + mat[0][2]);
+            y = (int)(mat[1][0]*j + mat[1][1]*i + mat[1][2]);
 
-            if ( (0<=y) && (y<oldWidth) && (0<=x) && (x<oldHeight)) {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &img->pRgb[x * oldWidth + y], sizeof(Rgb));
+            if ( (0<=x) && (x<oldWidth) && (0<=y) && (y<oldHeight)) {
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
             } else {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &black, sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &black, sizeof(Rgb));
             }
         }
     }
 
-    return converted_img;
+    return cnvImg;
 }
 
 
@@ -140,7 +140,7 @@ Image *rotation(Image *img, char direction, int degrees)
     int tmpDegrees;
     double theta;
     double mat[3][3] = {{1,0,0,}, {0,1,0}, {0,0,1}};
-    Image *converted_img;
+    Image *cnvImg;
     Rgb black = {0,0,0};
 
 
@@ -153,14 +153,14 @@ Image *rotation(Image *img, char direction, int degrees)
     newWidth = (int)(fabs(sin(theta)*oldHeight) + fabs(cos(theta)*oldWidth));
 
     // 変換行列の作成
-    if (direction == 'l') {
+    if (direction == 'r') {
 
         mat[0][0] = cos(theta);
         mat[0][1] = sin(theta);
         mat[1][0] = -sin(theta);
         mat[1][1] = cos(theta);
 
-    } else if (direction == 'r') {
+    } else if (direction == 'l') {
 
         mat[0][0] = cos(theta);
         mat[0][1] = -sin(theta);
@@ -176,60 +176,60 @@ Image *rotation(Image *img, char direction, int degrees)
     tmpDegrees = degrees % 360;
     if (0 < tmpDegrees && tmpDegrees <= 90) {
 
-        if (direction == 'l') {
-            mat[1][2] = sin(theta)*oldHeight;
+        if (direction == 'r') {
+            mat[1][2] = sin(theta)*oldWidth;
         } else {
-            mat[0][2] = sin(theta)*oldWidth;
+            mat[0][2] = sin(theta)*oldHeight;
         }
 
     } else if (90 < tmpDegrees && tmpDegrees <= 180) {
 
-        if (direction == 'l') {
-            mat[1][2] = newWidth;
-            mat[0][2] = fabs(cos(theta))*oldHeight;
+        if (direction == 'r') {
+            mat[1][2] = newHeight;
+            mat[0][2] = fabs(cos(theta))*oldWidth;
         } else {
-            mat[1][2] = fabs(cos(theta))*oldWidth;
-            mat[0][2] = newHeight;
+            mat[1][2] = fabs(cos(theta))*oldHeight;
+            mat[0][2] = newWidth;
         }
 
     } else if (180 < tmpDegrees && tmpDegrees <= 270) {
 
-        if (direction == 'l') {
-            mat[1][2] = fabs(cos(theta))*oldWidth;
-            mat[0][2] = newHeight;
+        if (direction == 'r') {
+            mat[1][2] = fabs(cos(theta))*oldHeight;
+            mat[0][2] = newWidth;
         } else {
-            mat[1][2] = newWidth;
-            mat[0][2] = fabs(cos(theta))*oldHeight;
+            mat[1][2] = newHeight;
+            mat[0][2] = fabs(cos(theta))*oldWidth;
         }
 
     } else if (270 < tmpDegrees && tmpDegrees <= 360) {
 
-        if (direction == 'l') {
-            mat[0][2] = fabs(sin(theta))*oldWidth;
+        if (direction == 'r') {
+            mat[0][2] = fabs(sin(theta))*oldHeight;
         } else {
-            mat[1][2] = fabs(sin(theta))*oldHeight;
+            mat[1][2] = fabs(sin(theta))*oldWidth;
         }
 
     }
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
+    cnvImg = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
-            x = (int)(mat[0][0]*i + mat[0][1]*j + mat[0][2]);
-            y = (int)(mat[1][0]*i + mat[1][1]*j + mat[1][2]);
+            x = (int)(mat[0][0]*j + mat[0][1]*i + mat[0][2]);
+            y = (int)(mat[1][0]*j + mat[1][1]*i + mat[1][2]);
 
-            if ( (0<=y) && (y<oldWidth) && (0<=x) && (x<oldHeight)) {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &img->pRgb[x * oldWidth + y], sizeof(Rgb));
+            if ( (0<=x) && (x<oldWidth) && (0<=y) && (y<oldHeight)) {
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
             } else {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &black, sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &black, sizeof(Rgb));
             }
         }
     }
 
-    return converted_img;
+    return cnvImg;
 }
 
 
@@ -242,7 +242,7 @@ Image *skew(Image *img, char direction, int degrees)
     int tmpDegrees;
     double theta;
     double mat[3][3] = {{1,0,0,}, {0,1,0}, {0,0,1}};
-    Image *converted_img;
+    Image *cnvImg;
     Rgb black = {0,0,0};
 
 
@@ -261,11 +261,12 @@ Image *skew(Image *img, char direction, int degrees)
 
     // 変換行列の作成
     if (direction == 'x') {
-        mat[1][0] = tan(degrees * PI / 180);
+        mat[0][1] = tan(degrees * PI / 180);
         newWidth = (int)(oldWidth+fabs(oldHeight*tan(theta)));
     } else if (direction == 'y') {
-        mat[0][1] = tan(degrees * PI / 180);
+        mat[1][0] = tan(degrees * PI / 180);
         newHeight = (int)(oldHeight+fabs(oldWidth*tan(theta)));
+
     } else {
         fprintf(stderr, "引数が正しくありません: skew %c %d\n", direction, degrees);
         return NULL;
@@ -274,31 +275,31 @@ Image *skew(Image *img, char direction, int degrees)
     // 第１象限からはみ出す分のオフセット
     tmpDegrees = degrees % 360;
     if ((90 < tmpDegrees && tmpDegrees < 180) || (270 < tmpDegrees && tmpDegrees < 360)) {
-        if (direction == 'x') {
-            mat[1][2] = newHeight*fabs(tan(theta));
+        if (direction == 'y') {
+            mat[1][2] = newWidth*fabs(tan(theta));
         } else {
-            mat[0][2] = newWidth*fabs(tan(theta));
+            mat[0][2] = newHeight*fabs(tan(theta));
         }
     }
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
+    cnvImg = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
-            x = (int)(mat[0][0]*i + mat[0][1]*j + mat[0][2]);
-            y = (int)(mat[1][0]*i + mat[1][1]*j + mat[1][2]);
+            x = (int)(mat[0][0]*j + mat[0][1]*i + mat[0][2]);
+            y = (int)(mat[1][0]*j + mat[1][1]*i + mat[1][2]);
 
-            if ( (0<=y) && (y<oldWidth) && (0<=x) && (x<oldHeight)) {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &img->pRgb[x * oldWidth + y], sizeof(Rgb));
+            if ( (0<=x) && (x<oldWidth) && (0<=y) && (y<oldHeight)) {
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
             } else {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &black, sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &black, sizeof(Rgb));
             }
         }
     }
 
-    return converted_img;
+    return cnvImg;
 }
 
 
