@@ -18,7 +18,7 @@ Image *scale(Image *img, char direction, double scale)
     int newWidth, newHeight;
     int oldWidth, oldHeight;
     double mat[3][3] = {{1,0,0,}, {0,1,0}, {0,0,1}};
-    Image *converted_img;
+    Image *cnvImg;
     Rgb black = {0,0,0};
 
 
@@ -51,7 +51,7 @@ Image *scale(Image *img, char direction, double scale)
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
+    cnvImg = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
@@ -59,14 +59,14 @@ Image *scale(Image *img, char direction, double scale)
             y = (int)(mat[1][0]*j + mat[1][1]*i + mat[1][2]);
 
             if ( (0<=x) && (x<oldWidth) && (0<=y) && (y<oldHeight)) {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
             } else {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &black, sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &black, sizeof(Rgb));
             }
         }
     }
 
-    return converted_img;
+    return cnvImg;
 }
 
 
@@ -77,7 +77,7 @@ Image *move(Image *img, char direction, int pix)
     int newWidth, newHeight;
     int oldWidth, oldHeight;
     double mat[3][3] = {{1,0,0,}, {0,1,0}, {0,0,1}};
-    Image *converted_img;
+    Image *cnvImg;
     Rgb black = {0,0,0};
 
     oldWidth = img->width;
@@ -112,7 +112,7 @@ Image *move(Image *img, char direction, int pix)
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
+    cnvImg = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
@@ -120,14 +120,14 @@ Image *move(Image *img, char direction, int pix)
             y = (int)(mat[1][0]*j + mat[1][1]*i + mat[1][2]);
 
             if ( (0<=x) && (x<oldWidth) && (0<=y) && (y<oldHeight)) {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
             } else {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &black, sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &black, sizeof(Rgb));
             }
         }
     }
 
-    return converted_img;
+    return cnvImg;
 }
 
 
@@ -140,7 +140,7 @@ Image *rotation(Image *img, char direction, int degrees)
     int tmpDegrees;
     double theta;
     double mat[3][3] = {{1,0,0,}, {0,1,0}, {0,0,1}};
-    Image *converted_img;
+    Image *cnvImg;
     Rgb black = {0,0,0};
 
 
@@ -214,7 +214,7 @@ Image *rotation(Image *img, char direction, int degrees)
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
+    cnvImg = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
@@ -222,14 +222,14 @@ Image *rotation(Image *img, char direction, int degrees)
             y = (int)(mat[1][0]*j + mat[1][1]*i + mat[1][2]);
 
             if ( (0<=x) && (x<oldWidth) && (0<=y) && (y<oldHeight)) {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
             } else {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &black, sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &black, sizeof(Rgb));
             }
         }
     }
 
-    return converted_img;
+    return cnvImg;
 }
 
 
@@ -242,7 +242,7 @@ Image *skew(Image *img, char direction, int degrees)
     int tmpDegrees;
     double theta;
     double mat[3][3] = {{1,0,0,}, {0,1,0}, {0,0,1}};
-    Image *converted_img;
+    Image *cnvImg;
     Rgb black = {0,0,0};
 
 
@@ -284,7 +284,7 @@ Image *skew(Image *img, char direction, int degrees)
 
     toInv(mat);
 
-    converted_img = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
+    cnvImg = initImage(newWidth, newHeight, img->headerSize, img->header, img->isColor);
 
     for (i = 0; i<newHeight; i++) {
         for (j = 0; j <newWidth; j++) {
@@ -292,14 +292,14 @@ Image *skew(Image *img, char direction, int degrees)
             y = (int)(mat[1][0]*j + mat[1][1]*i + mat[1][2]);
 
             if ( (0<=x) && (x<oldWidth) && (0<=y) && (y<oldHeight)) {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &img->pRgb[y * oldWidth + x], sizeof(Rgb));
             } else {
-                memcpy(&converted_img->pRgb[i * newWidth + j], &black, sizeof(Rgb));
+                memcpy(&cnvImg->pRgb[i * newWidth + j], &black, sizeof(Rgb));
             }
         }
     }
 
-    return converted_img;
+    return cnvImg;
 }
 
 
