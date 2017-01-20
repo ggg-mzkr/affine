@@ -3,7 +3,7 @@
 #include <string.h>
 #include "img_obj.h"
 #include "bitmap.h"
-#include "ppm.h"
+#include "pnm.h"
 #include "affine.h"
 
 void echoUsage(char *programName);

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "img_obj.h"
-#include "ppm.h"
+#include "pnm.h"
 
 
 Image *readImage(char *filename)
