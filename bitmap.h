@@ -7,7 +7,7 @@
 
 #define HEADER_SIZE_BITMAP 54
 
-#include "img_obj.h"
+#include "img.h"
 
 Image *readImage(char *filename);
 

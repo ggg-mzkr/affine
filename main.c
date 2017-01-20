@@ -1,7 +1,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include <string.h>
-#include "img_obj.h"
+#include "img.h"
 #include "bitmap.h"
 #include "pnm.h"
 #include "affine.h"

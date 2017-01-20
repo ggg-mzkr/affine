@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "affine.h"
-#include "img_obj.h"
+#include "img.h"
 
 
 Image *scale(Image *img, char direction, double scale)

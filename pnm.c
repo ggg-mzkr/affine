@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "img_obj.h"
+#include "img.h"
 #include "pnm.h"
 
 

@@ -7,7 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "img_obj.h"
+#include "img.h"
 
 #define HEADER_SIZE_PPM 20
 #define FORMAT_OFFSET 0

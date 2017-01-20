@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include<string.h>
 #include"bitmap.h"
-#include "img_obj.h"
+#include "img.h"
 
 
 Image *readImage(char *filename)

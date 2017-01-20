@@ -5,7 +5,7 @@
 #ifndef AFFINE_AFFINE_H
 #define AFFINE_AFFINE_H
 
-#include "img_obj.h"
+#include "img.h"
 
 // direction = x or y
 Image *scale(Image *img, char direction, double scale);

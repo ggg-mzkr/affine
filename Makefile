@@ -1,14 +1,14 @@
-affine_bitmap: main.c bitmap.o affine.o img_obj.o
-	gcc main.c bitmap.o affine.o img_obj.o -o affine_bitmap
+affine_bitmap: main.c bitmap.o affine.o img.o
+	gcc main.c bitmap.o affine.o img.o -o affine_bitmap
 
-affine_pnm: main.c pnm.o affine.o img_obj.o
-	gcc main.c pnm.o affine.o img_obj.o -o affine_pnm
+affine_pnm: main.c pnm.o affine.o img.o
+	gcc main.c pnm.o affine.o img.o -o affine_pnm
 
 affine.o: affine.c
 	gcc -c affine.c
 
-img_obj.o: img_obj.c
-	gcc -c img_obj.c
+img.o: img.c
+	gcc -c img.c
 
 bitmap.o: bitmap.c
 	gcc -c bitmap.c
