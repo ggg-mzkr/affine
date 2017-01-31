@@ -25,6 +25,12 @@ Image *readImage(char *filename)
     }
 
     getNextToken(fp, buf);
+
+    if (strcmp(buf, "P1") != 0 && strcmp(buf, "P2") != 0 && strcmp(buf, "P3") != 0) {
+        fprintf(stderr, "エラー: %s はテキスト系式のPNMファイルではありません\n", filename);
+        return NULL;
+    }
+
     strcpy(header + FORMAT_OFFSET, buf);
 
     if (strcmp(buf, "P3") != 0) {
